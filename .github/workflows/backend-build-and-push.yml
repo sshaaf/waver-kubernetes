@@ -75,5 +75,5 @@ jobs:
           mvn package \
             -Dquarkus.container-image.build=true \
             -Dquarkus.container-image.push=true \
-            -Dquarkus.container-image.tag=${GITHUB_SHA::8} \
+            -Dquarkus.container-image.tag=${{ github.sha }} \
             -Dquarkus.container-image.additional-tags=latest
