@@ -1,8 +1,9 @@
+---
 name: Build and Push Backend
 
-on:
+"on":
   push:
-    branches: [ main ]
+    branches: [main, fix-actions]
     paths:
       - 'waver-backend/**'
       - '.github/workflows/backend-build-and-push.yml'
@@ -11,7 +12,7 @@ on:
       - '**.png'
       - '**.jpg'
   pull_request:
-    branches: [ main ]
+    branches: [main, fix-actions]
     paths:
       - 'waver-backend/**'
       - '.github/workflows/backend-build-and-push.yml'
@@ -45,7 +46,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-backend-${{ hashFiles('waver-backend/pom.xml') }}
+          key: >-
+            ${{ runner.os }}-maven-backend-${{
+            hashFiles('waver-backend/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-backend-
 
@@ -58,7 +61,8 @@ jobs:
           password: ${{ secrets.QUAY_PASSWORD }}
 
       - name: Build Container Image (PR Check)
-        # This step ONLY runs for pull requests. It builds the image but does NOT push.
+        # This step ONLY runs for pull requests.
+        # It builds the image but does NOT push.
         if: github.event_name == 'pull_request'
         working-directory: ./waver-backend
         run: |
@@ -68,7 +72,8 @@ jobs:
             -Dquarkus.container-image.tag=${{ github.sha }}
 
       - name: Build and Push Container Image (on Merge to Main)
-        # This step ONLY runs on a push to the main branch. It builds AND pushes.
+        # This step ONLY runs on a push to the main branch.
+        # It builds AND pushes.
         if: github.event_name == 'push'
         working-directory: ./waver-backend
         run: |
