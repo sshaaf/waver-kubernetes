@@ -54,11 +54,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./waver-site
-          push: false #
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       # This step ONLY runs on a push to the main branch. It builds AND pushes.
       - name: Build and Push Docker image
@@ -66,8 +64,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./waver-site
-          push: true #
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
