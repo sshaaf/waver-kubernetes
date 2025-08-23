@@ -61,16 +61,13 @@ jobs:
           driver: docker-container
 
       - name: Build Container Image (PR Check)
+        # This step ONLY runs for pull requests. It builds the image but does NOT push.
         if: github.event_name == 'pull_request'
-        uses: docker/build-push-action@v6
-        with:
-          context: ./waver-backend
-          # For a PR check, you don't push the image
-          push: false
-          tags: quay.io/sshaaf/waver-backend:${{ github.sha }}
-          # Enable GHA caching
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: |
+          mvn package -pl waver-backend \
+            -Dquarkus.container-image.build=true \
+            -Dquarkus.container-image.push=false \
+            -Dquarkus.container-image.tag=${{ github.sha }}
 
       - name: Build and Push Container Image (Main Branch)
         if: github.event_name == 'push'
