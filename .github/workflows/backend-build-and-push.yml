@@ -50,15 +50,15 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
 
+      - name: Build Quarkus App with Maven
+        working-directory: ./waver-backend
+        run: mvn package
+
       # Set up Docker Buildx with the docker-container driver to enable GHA cache
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver: docker-container
-
-      - name: Build Quarkus App with Maven
-        working-directory: ./waver-backend
-        run: mvn package
 
       - name: Build Container Image (PR Check)
         if: github.event_name == 'pull_request'
