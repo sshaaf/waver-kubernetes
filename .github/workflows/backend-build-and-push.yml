@@ -5,20 +5,13 @@ on:
     branches: [main, fix-actions]
     paths:
       - 'waver-backend/**'
-      - '.github/workflows/backend-build-and-push-fixed.yml'
-    paths-ignore:
-      - '**.md'
-      - '**.png'
-      - '**.jpg'
+      - '.github/workflows/backend-build-and-push.yml'
   pull_request:
     branches: [main, fix-actions]
     paths:
       - 'waver-backend/**'
-      - '.github/workflows/backend-build-and-push-fixed.yml'
-    paths-ignore:
-      - '**.md'
-      - '**.png'
-      - '**.jpg'
+      - '.github/workflows/backend-build-and-push.yml'
+
   workflow_dispatch:
 
 env:
