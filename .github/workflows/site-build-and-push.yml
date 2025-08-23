@@ -1,6 +1,5 @@
 name: Build and Push site
 
-# This workflow now runs on pushes to 'main' AND on pull requests targeting 'main'.
 on:
   push:
     branches: [ main ]
