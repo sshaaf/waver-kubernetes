@@ -7,10 +7,6 @@ on:
     paths:
       - 'waver-backend/**'
       - '.github/workflows/backend-build-and-push.yml'
-    paths-ignore:
-      - '**.md'
-      - '**.png'
-      - '**.jpg'
   pull_request:
     branches: [main, fix-actions]
     paths:
