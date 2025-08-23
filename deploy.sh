@@ -181,31 +181,59 @@ if [[ "$SKIP_SERVERLESS_CHECK" != "true" ]]; then
     print_step "Checking OpenShift Serverless installation"
     
     # Check if Serverless operator is installed
-    if ! oc get csv -n openshift-serverless | grep -q serverless-operator; then
+    if ! oc get csv -n openshift-serverless | grep -q "serverless-operator.*Succeeded"; then
         print_warning "OpenShift Serverless operator not found"
         print_info "Installing OpenShift Serverless operator..."
         
         oc create namespace openshift-serverless --dry-run=client -o yaml | oc apply -f -
         
-        cat << EOF | oc apply -f -
-apiVersion: operators.coreos.com/v1alpha1
+        echo 'apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: serverless-operator
   namespace: openshift-serverless
 spec:
   channel: stable
+  installPlanApproval: Automatic
   name: serverless-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-EOF
+  startingCSV: serverless-operator.v1.36.0' | oc apply -f -
         
         print_info "Waiting for Serverless operator to be ready..."
-        sleep 30
+        print_info "This may take 2-3 minutes for CRDs to be installed..."
+        
+        # Wait for the serverless operator to be ready
+        print_info "Waiting for operator installation to complete..."
+        for i in {1..20}; do
+            if oc get csv -n openshift-serverless | grep -q "serverless-operator.*Succeeded"; then
+                print_success "Serverless operator is ready"
+                break
+            fi
+            print_info "Waiting for operator CSV... ($i/20)"
+            sleep 15
+        done
+        
+        # Wait for CRDs to be available
+        print_info "Waiting for Knative CRDs..."
+        for i in {1..12}; do
+            if oc get crd knativeservings.operator.knative.dev &>/dev/null; then
+                print_success "KnativeServing CRD is available"
+                break
+            fi
+            print_info "Waiting for operator CRDs... ($i/12)"
+            sleep 15
+        done
+        
+        # Verify the CRD exists
+        if ! oc get crd knativeservings.operator.knative.dev &>/dev/null; then
+            print_error "Timeout waiting for Serverless operator CRDs"
+            print_info "Please check: oc get csv -n openshift-serverless"
+            exit 1
+        fi
         
         # Create KnativeServing
-        cat << EOF | oc apply -f -
-apiVersion: operator.knative.dev/v1beta1
+        echo 'apiVersion: operator.knative.dev/v1beta1
 kind: KnativeServing
 metadata:
   name: knative-serving
@@ -216,20 +244,49 @@ spec:
       enabled: true
   config:
     network:
-      ingress-class: "kourier.ingress.networking.knative.dev"
-EOF
+      ingress-class: "kourier.ingress.networking.knative.dev"' | oc apply -f -
 
+
+        # Wait for KnativeEventing CRD
+        print_info "Waiting for KnativeEventing CRD..."
+        for i in {1..8}; do
+            if oc get crd knativeeventings.operator.knative.dev &>/dev/null; then
+                print_success "KnativeEventing CRD is available"
+                break
+            fi
+            print_info "Waiting for eventing CRD... ($i/8)"
+            sleep 10
+        done
+        
         # Create KnativeEventing
-        cat << EOF | oc apply -f -
-apiVersion: operator.knative.dev/v1beta1
+        echo 'apiVersion: operator.knative.dev/v1beta1
 kind: KnativeEventing
 metadata:
   name: knative-eventing
-  namespace: knative-eventing
-EOF
+  namespace: knative-eventing' | oc apply -f -
         
         print_info "Waiting for Knative to be ready..."
-        sleep 60
+        print_info "Checking KnativeServing readiness..."
+        oc wait --for=condition=Ready knativeserving/knative-serving -n knative-serving --timeout=300s || true
+        
+        # Wait for Knative Service CRD to be available
+        print_info "Verifying Knative Service CRD availability..."
+        for i in {1..10}; do
+            if oc get crd services.serving.knative.dev &>/dev/null; then
+                print_success "Knative Service CRD is available"
+                break
+            fi
+            print_info "Waiting for Knative Service CRD... ($i/10)"
+            sleep 15
+        done
+        
+        # Final verification
+        if ! oc get crd services.serving.knative.dev &>/dev/null; then
+            print_error "Knative Service CRD not available after timeout"
+            print_info "Debug: oc get knativeserving/knative-serving -n knative-serving"
+            oc get knativeserving/knative-serving -n knative-serving || true
+            exit 1
+        fi
     fi
     
     print_success "OpenShift Serverless is ready"
