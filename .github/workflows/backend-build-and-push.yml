@@ -67,7 +67,7 @@ jobs:
           context: ./waver-backend
           # For a PR check, you don't push the image
           push: false
-          tags: quay.io/your-repo/waver-backend:${{ github.sha }}
+          tags: quay.io/sshaaf/waver-backend:${{ github.sha }}
           # Enable GHA caching
           cache-from: type=gha
           cache-to: type=gha,mode=max
