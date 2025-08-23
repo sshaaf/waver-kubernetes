@@ -1,332 +1,347 @@
 # Waver Site
 
-Modern web interface built with Next.js that provides a user-friendly way to generate and view AI-generated code tutorials.
+[![Next.js 15](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
+[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind%20CSS-4-38B2AC.svg)](https://tailwindcss.com/)
 
-## Overview
+A beautiful, modern frontend for the Waver AI-powered tutorial generation platform. Built with Next.js 15, this web application provides an intuitive interface for browsing existing tutorials and generating new ones from GitHub repositories using Large Language Models.
 
-`waver-site` is a Next.js web application that:
-- **Provides Web Interface**: User-friendly interface for tutorial generation requests
-- **Sends Cloud Events**: Dispatches tutorial generation requests to waver-backend
-- **Displays Tutorials**: Renders generated tutorials with interactive features
-- **Integrates with MinIO**: Loads tutorials from S3-compatible storage
-- **Supports Multiple Formats**: Displays tutorials in various output formats
+## ✨ Features
 
-## Architecture
+- **🎨 Modern UI**: Clean, responsive design built with Tailwind CSS and Radix UI components
+- **🔍 Tutorial Discovery**: Browse and search through generated tutorials with category filtering
+- **⚡ Real-time Generation**: Trigger AI-powered tutorial generation from GitHub repositories
+- **📊 Cloud Events Integration**: Seamless communication with the serverless backend
+- **🗃️ MinIO Integration**: Direct access to stored tutorials and files
+- **📱 Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **🎯 SSR Ready**: Server-side rendering for optimal performance and SEO
+- **🔧 Type Safe**: Full TypeScript support with strict type checking
 
-### Core Components
+## 🏗️ Architecture
 
-#### Frontend Interface
-- **`HomePageClient`**: Main page with tutorial generation form
-- **`TutorialDisplay`**: Renders generated tutorials
-- **`TutorialCard`**: Displays tutorial metadata and previews
-- **`MermaidRenderer`**: Renders Mermaid diagrams in tutorials
-
-#### Backend Integration
-- **`tutorial-generator`**: Sends cloud events to waver-backend
-- **`minio-client`**: Integrates with MinIO/S3 storage
-- **`github-client`**: GitHub API integration for repository information
-
-#### Data Management
-- **`tutorial-loader`**: Loads tutorials from storage
-- **`markdown-processor`**: Processes markdown content
-- **`curated-tutorials`**: Pre-curated tutorial content
-
-### Data Flow
 ```
-User Input → Web Form → Cloud Event → waver-backend → MinIO Storage
-    ↓           ↓          ↓            ↓              ↓
-  Git URL   Validation   Dispatch   Processing    Store Results
-    ↓           ↓          ↓            ↓              ↓
-  Tutorial   Display     Load from   Render with   Interactive
-  Request    Results     Storage     Components    Features
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Next.js UI    │───▶│   Cloud Events   │───▶│ Waver Backend   │
+│   (Frontend)    │    │   (HTTP/Events)  │    │  (Serverless)   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                                              │
+         ▼                                              ▼
+┌─────────────────┐                            ┌─────────────────┐
+│   MinIO S3      │◀───────────────────────────│ Generated       │
+│   (Storage)     │                            │ Tutorials       │
+└─────────────────┘                            └─────────────────┘
 ```
 
-## Features
+## 🚀 Quick Start
 
-- **Modern UI**: Built with Next.js 15 and React 19
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
-- **Interactive Tutorials**: Mermaid diagrams, syntax highlighting, and navigation
-- **Cloud Event Integration**: Seamless integration with waver-backend
-- **Storage Integration**: Direct access to MinIO/S3 storage
-- **GitHub Integration**: Repository information and metadata display
+### Prerequisites
 
-## Prerequisites
+- **Node.js 18+** - Required for Next.js 15
+- **npm or yarn** - Package manager
+- **MinIO Server** - For tutorial storage (local or remote)
+- **Waver Backend** - AI tutorial generation service
 
-- Node.js 18 or higher
-- npm, yarn, pnpm, or bun package manager
-- Access to waver-backend service
-- MinIO or S3-compatible storage access
+### 1. Install Dependencies
 
-## Installation
-
-### Clone and Install Dependencies
 ```bash
-# Navigate to waver-site directory
 cd waver-site
-
-# Install dependencies
 npm install
-# or
-yarn install
-# or
-pnpm install
-# or
-bun install
 ```
 
-### Environment Configuration
-Create a `.env.local` file with the following variables:
+### 2. Configure Environment
 
-```bash
-# Backend Service Configuration
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
-NEXT_PUBLIC_CLOUD_EVENT_ENDPOINT=http://localhost:8080
+Create a `.env.local` file:
 
-# MinIO/S3 Configuration
-NEXT_PUBLIC_MINIO_ENDPOINT=http://localhost:9000
-NEXT_PUBLIC_MINIO_BUCKET=waver-bucket
-NEXT_PUBLIC_MINIO_REGION=us-east-1
+```env
+# MinIO Configuration
+MINIO_ENDPOINT=http://localhost:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET=waver-bucket
 
-# GitHub Integration (Optional)
-GITHUB_TOKEN=your-github-token
+# Backend Service
+CLOUD_EVENT_SERVICE_URL=http://localhost:8080
 ```
 
-## Development
+### 3. Run Development Server
 
-### Running in Development Mode
 ```bash
-# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-### Development Features
-- **Hot Reloading**: Automatic page updates as you edit
-- **TypeScript Support**: Full type safety and IntelliSense
-- **ESLint Integration**: Code quality and consistency
-- **Tailwind CSS**: Utility-first CSS framework
+## 🛠️ Development
 
-## Building
+### Available Scripts
 
-### Production Build
 ```bash
+# Start development server with Turbopack
+npm run dev
+
 # Build for production
 npm run build
-# or
-yarn build
-# or
-pnpm build
-# or
-bun build
-```
 
-### Build Output
-- **Static Files**: `out/` directory with static assets
-- **Optimized Bundles**: Minified and optimized JavaScript/CSS
-- **Server Components**: Server-side rendered components
-
-## Deployment
-
-### Local Production Server
-```bash
 # Start production server
 npm start
-# or
-yarn start
-# or
-pnpm start
-# or
-bun start
+
+# Run ESLint
+npm run lint
 ```
 
-### Docker Deployment
+### Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API Routes
+│   │   └── generate-tutorial/ # Tutorial generation endpoint
+│   ├── tutorial/          # Tutorial pages
+│   │   └── [slug]/       # Dynamic tutorial routes
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Homepage
+├── components/           # React Components
+│   ├── tutorial/        # Tutorial-specific components
+│   ├── ui/              # Reusable UI components
+│   ├── HomePageClient.tsx
+│   └── MermaidRenderer.tsx
+├── lib/                 # Utility libraries
+│   ├── minio-client.ts  # MinIO integration
+│   ├── tutorial-loader.ts
+│   └── utils.ts
+├── types/               # TypeScript definitions
+└── data/               # Static data and configurations
+```
+
+### Key Components
+
+#### **HomePageClient**
+Main homepage component that handles:
+- Tutorial browsing and filtering
+- Search functionality
+- GitHub repository submission for generation
+- Category-based filtering
+
+#### **TutorialDisplay**
+Renders individual tutorials with:
+- Markdown processing with syntax highlighting
+- Mermaid diagram support
+- Chapter navigation
+- Responsive layout
+
+#### **MinIO Integration**
+Direct integration with object storage:
+- Tutorial file listing and retrieval
+- Metadata extraction
+- Presigned URL generation for downloads
+
+## 🔌 API Integration
+
+### Tutorial Generation
+
+```typescript
+// POST /api/generate-tutorial
+const response = await fetch('/api/generate-tutorial', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    repositoryUrl: 'https://github.com/user/repo'
+  })
+});
+```
+
+### Cloud Events
+
+The frontend sends Cloud Events to the backend service:
+
+```typescript
+const cloudEvent = {
+  specversion: '1.0',
+  type: 'waver.tutorial.generate',
+  source: 'waver-site',
+  id: uuidv4(),
+  time: new Date().toISOString(),
+  datacontenttype: 'application/json',
+  data: { sourceUrl: repositoryUrl }
+};
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINIO_ENDPOINT` | `http://localhost:9000` | MinIO server endpoint |
+| `MINIO_ACCESS_KEY` | `minioadmin` | MinIO access key |
+| `MINIO_SECRET_KEY` | `minioadmin` | MinIO secret key |
+| `MINIO_BUCKET` | `waver-bucket` | Default bucket for tutorials |
+| `CLOUD_EVENT_SERVICE_URL` | `http://localhost:8080` | Backend service URL |
+
+### Next.js Configuration
+
+The application uses these Next.js features:
+- **Standalone Output**: Optimized for container deployments
+- **Server-side Environment**: Secure environment variable handling
+- **App Router**: Modern routing with layouts and server components
+- **TypeScript**: Full type safety across the application
+
+## 🎨 Styling
+
+### Tailwind CSS 4
+
+The application uses Tailwind CSS 4 with:
+- **Custom Design System**: Consistent spacing, colors, and typography
+- **Dark Mode Ready**: CSS variables for theme switching
+- **Component Variants**: Using `class-variance-authority` for component APIs
+- **Responsive Design**: Mobile-first responsive utilities
+
+### UI Components
+
+Built with Radix UI primitives:
+- **Accessible**: Full keyboard navigation and screen reader support
+- **Customizable**: Styled with Tailwind CSS
+- **Composable**: Flexible component composition patterns
+
+## 🚀 Deployment
+
+### Docker Build
+
 ```bash
-# Build Docker image
-docker build -t waver-site:latest .
+# Build image
+docker build -t waver-site .
 
 # Run container
 docker run -p 3000:3000 \
-  -e NEXT_PUBLIC_BACKEND_URL="http://backend:8080" \
-  waver-site:latest
+  -e MINIO_ENDPOINT=http://minio:9000 \
+  -e CLOUD_EVENT_SERVICE_URL=http://backend:8080 \
+  waver-site
 ```
 
-### OpenShift/Kubernetes Deployment
+### OpenShift Deployment
+
 ```bash
-# Apply deployment manifests
-kubectl apply -f openshift/
+# Build and push to registry
+docker build -t quay.io/yourusername/waver-site:latest .
+docker push quay.io/yourusername/waver-site:latest
 
-# Or use the deployment script
-./openshift/deploy.sh
+# Deploy using provided manifests
+oc apply -f openshift/
 ```
 
-## Project Structure
+### Environment Setup for Production
 
-```
-waver-site/
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── api/               # API routes
-│   │   ├── tutorial/          # Tutorial display pages
-│   │   ├── globals.css        # Global styles
-│   │   ├── layout.tsx         # Root layout
-│   │   └── page.tsx           # Home page
-│   ├── components/            # React components
-│   │   ├── ui/               # Reusable UI components
-│   │   └── tutorial/         # Tutorial-specific components
-│   ├── lib/                   # Utility libraries
-│   │   ├── github/           # GitHub API client
-│   │   ├── minio-client.ts   # MinIO integration
-│   │   └── tutorial-generator.ts
-│   ├── types/                 # TypeScript type definitions
-│   └── data/                  # Static data and configurations
-├── public/                    # Static assets
-├── openshift/                 # Deployment configurations
-└── package.json               # Dependencies and scripts
-```
-
-## Key Components
-
-### Tutorial Generation
-- **`tutorial-generator.ts`**: Handles cloud event dispatch to backend
-- **`minio-client.ts`**: Manages MinIO/S3 storage operations
-- **`github-client.ts`**: Fetches repository information from GitHub
-
-### Tutorial Display
-- **`TutorialDisplay.tsx`**: Main tutorial rendering component
-- **`MermaidRenderer.tsx`**: Renders Mermaid diagrams
-- **`TutorialCard.tsx`**: Displays tutorial metadata and previews
-
-### UI Components
-- **`ui/`**: Reusable components (buttons, cards, inputs)
-- **`HomePageClient.tsx`**: Main page with tutorial generation form
-- **`layout.tsx`**: Root layout with navigation and styling
-
-## API Integration
-
-### Cloud Events
-The site sends cloud events to waver-backend for tutorial generation:
-
-```typescript
-// Example cloud event structure
-{
-  type: "dev.shaaf.waver.tutorial.request",
-  source: "waver-site",
-  data: {
-    gitUrl: "https://github.com/user/repo.git",
-    projectName: "My Project",
-    llmProvider: "Gemini",
-    outputFormat: "MARKDOWN"
-  }
-}
-```
-
-### MinIO Integration
-Direct integration with MinIO/S3 for loading tutorials:
-
-```typescript
-// Load tutorial from storage
-const tutorial = await loadTutorialFromStorage(tutorialId);
-const metadata = await loadTutorialMetadata(tutorialId);
-```
-
-## Styling and UI
-
-### Design System
-- **Tailwind CSS**: Utility-first CSS framework
-- **Radix UI**: Accessible component primitives
-- **Lucide Icons**: Consistent iconography
-- **Responsive Design**: Mobile-first approach
-
-### Theme and Colors
-- **Light/Dark Mode**: Automatic theme detection
-- **Consistent Palette**: Brand colors and semantic colors
-- **Typography**: Optimized font loading with Next.js
-
-## Testing
-
-### Running Tests
 ```bash
-# Run linting
-npm run lint
-# or
-yarn lint
-
-# Run type checking
-npm run type-check
-# or
-yarn type-check
+# Production environment variables
+export MINIO_ENDPOINT=https://minio.your-domain.com
+export MINIO_ACCESS_KEY=your-production-key
+export MINIO_SECRET_KEY=your-production-secret
+export CLOUD_EVENT_SERVICE_URL=https://backend.your-domain.com
 ```
 
-### Testing Strategy
-- **ESLint**: Code quality and consistency
-- **TypeScript**: Compile-time type checking
-- **Component Testing**: React component testing (when implemented)
+## 🧪 Features in Detail
 
-## Performance
+### Tutorial Generation Flow
 
-### Optimization Features
-- **Next.js 15**: Latest performance optimizations
-- **Turbopack**: Fast development bundler
-- **Image Optimization**: Automatic image optimization
-- **Code Splitting**: Automatic code splitting and lazy loading
+1. **User Input**: User enters GitHub repository URL
+2. **Validation**: Frontend validates URL format
+3. **Cloud Event**: Sends structured event to backend service
+4. **Processing**: Backend generates tutorial using AI
+5. **Storage**: Results stored in MinIO bucket
+6. **Display**: Frontend automatically shows new tutorial
 
-### Monitoring
-- **Core Web Vitals**: Performance metrics tracking
-- **Bundle Analysis**: Bundle size monitoring
-- **Runtime Performance**: Client-side performance monitoring
+### Tutorial Browsing
 
-## Troubleshooting
+- **Category Filtering**: Browse by programming language or framework
+- **Search**: Full-text search across tutorial titles and descriptions
+- **Pagination**: Efficient loading of large tutorial collections
+- **Preview**: Rich preview cards with metadata
+
+### Markdown Processing
+
+- **Syntax Highlighting**: Code blocks with language-specific highlighting
+- **Mermaid Diagrams**: Interactive diagram rendering
+- **GitHub Flavored Markdown**: Full GFM support including tables and task lists
+- **Custom Components**: Enhanced rendering with custom React components
+
+## 🔍 Troubleshooting
 
 ### Common Issues
 
-#### Backend Connection Failures
-- Verify `NEXT_PUBLIC_BACKEND_URL` is correct
-- Check backend service is running
-- Ensure network connectivity
+**MinIO Connection Errors**
+```bash
+# Check MinIO connectivity
+curl -v $MINIO_ENDPOINT/minio/health/live
 
-#### MinIO Storage Issues
-- Verify MinIO endpoint and bucket configuration
-- Check storage credentials and permissions
-- Ensure bucket exists and is accessible
+# Verify credentials
+docker exec minio-container mc admin info local
+```
 
-#### Build Failures
-- Clear `.next` directory: `rm -rf .next`
-- Clear node modules: `rm -rf node_modules && npm install`
-- Check Node.js version compatibility
+**Backend Service Unreachable**
+```bash
+# Test backend health
+curl $CLOUD_EVENT_SERVICE_URL/q/health/ready
 
-## Related Components
+# Check service discovery
+nslookup your-backend-service
+```
 
-- **[waver-core](../waver-core/README.md)**: Core logic used by the backend
-- **[waver-backend](../waver-backend/README.md)**: Backend service that processes requests
-- **[waver-cli](../waver-cli/README.md)**: Alternative CLI interface
+**Build Failures**
+```bash
+# Clear Next.js cache
+rm -rf .next node_modules
+npm install
+npm run build
+```
 
-## Contributing
+### Development Tips
 
-When contributing to waver-site:
+**Hot Reload Issues**
+- Ensure Turbopack is enabled with `--turbopack` flag
+- Check file permissions in mounted volumes
+- Restart dev server if TypeScript cache is stale
 
-1. **Follow Next.js best practices**
-2. **Use TypeScript for all new code**
-3. **Follow the existing component patterns**
-4. **Add proper error handling**
-5. **Ensure responsive design**
-6. **Update this README for new features**
+**Environment Variables Not Loading**
+- Restart development server after changing `.env.local`
+- Check variable names match `process.env.VARIABLE_NAME`
+- Verify variables are prefixed in `next.config.ts` if needed
 
-## Learn More
+## 🤝 Contributing
 
-To learn more about the technologies used:
+### Development Workflow
 
-- [Next.js Documentation](https://nextjs.org/docs) - Next.js features and API
-- [React Documentation](https://react.dev/) - React features and best practices
-- [Tailwind CSS](https://tailwindcss.com/docs) - Utility-first CSS framework
-- [TypeScript](https://www.typescriptlang.org/docs/) - TypeScript language reference
+1. **Fork** the repository
+2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
+3. **Install** dependencies (`npm install`)
+4. **Start** dev server (`npm run dev`)
+5. **Make** changes and test thoroughly
+6. **Commit** changes (`git commit -m 'Add amazing feature'`)
+7. **Push** to branch (`git push origin feature/amazing-feature`)
+8. **Create** Pull Request
 
-## License
+### Code Standards
 
-This component is part of the Waver project and is distributed under the MIT License.
+- **ESLint**: Follow configured linting rules
+- **TypeScript**: Maintain strict type safety
+- **Components**: Use consistent component patterns
+- **Styling**: Follow Tailwind CSS best practices
+- **Testing**: Add tests for new functionality
+
+## 📚 Related Documentation
+
+- **[Waver Backend](../waver-backend/README.md)** - AI tutorial generation service
+- **[Deployment Guide](../DEPLOYMENT_GUIDE.md)** - Complete OpenShift setup
+- **[Next.js Docs](https://nextjs.org/docs)** - Framework documentation
+- **[Tailwind CSS](https://tailwindcss.com/docs)** - Styling framework
+- **[MinIO Client](https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html)** - Object storage integration
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+
+---
+
+_Built with ❤️ for the Java community • Transform code into knowledge_
+
+For questions, issues, or contributions, visit our [GitHub repository](https://github.com/sshaaf/waver-kubernetes).
