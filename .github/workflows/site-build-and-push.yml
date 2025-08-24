@@ -1,8 +1,9 @@
 name: Build and Push site
 
+# This workflow now runs on pushes to 'main' AND on pull requests targeting 'main'.
 on:
   push:
-    branches: [ main ]
+    branches: [ main, test-site-build ]
     paths:
       - 'waver-site/**'
       - '.github/workflows/site-build-and-push.yml'
@@ -45,6 +46,7 @@ jobs:
           tags: |
             type=sha,format=short
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=test-{{branch}},enable=${{ github.ref == 'refs/heads/test-site-build' }}
 
       # This step ONLY runs for pull requests. It builds the image but does NOT push.
       - name: Build Docker image for PR
