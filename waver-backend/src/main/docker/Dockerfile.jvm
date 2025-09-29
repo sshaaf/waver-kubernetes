@@ -3,7 +3,8 @@ FROM registry.access.redhat.com/ubi8/openjdk-21-runtime:latest
 # Install git and other necessary tools
 USER root
 RUN microdnf install -y git findutils && \
-    microdnf clean all
+    microdnf clean all \
+RUN mkdir /home/jboss/.waver-git-clone/
 
 # Create application user and directories  
 RUN useradd --uid 1001 --gid 0 --shell /bin/bash --create-home jboss
