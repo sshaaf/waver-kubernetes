@@ -10,18 +10,15 @@ import { visit } from 'unist-util-visit';
 
 /**
  * Custom remark plugin to handle Mermaid code blocks
+ * Converts ```mermaid blocks into <pre class="mermaid"> tags for Mermaid.js
  */
 function remarkMermaid() {
   return function (tree: any) {
     visit(tree, 'code', (node: any) => {
       if (node.lang === 'mermaid') {
-        // Convert Mermaid code blocks to a special HTML element
+        // Convert to <pre class="mermaid"> format that Mermaid.js expects
         node.type = 'html';
-        node.value = `<div class="mermaid-diagram" data-mermaid="${encodeURIComponent(node.value)}" id="mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}">
-          <div class="mermaid-loading">Loading diagram...</div>
-        </div>`;
-        delete node.lang;
-        delete node.meta;
+        node.value = `<pre class="mermaid">\n${node.value}\n</pre>`;
       }
     });
   };

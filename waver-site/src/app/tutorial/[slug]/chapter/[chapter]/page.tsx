@@ -5,7 +5,7 @@ import { loadTutorialContent, loadTutorialChapter } from '@/lib/tutorial-loader'
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { processMarkdown } from '@/lib/markdown/processor';
-import { MermaidRenderer } from '@/components/MermaidRenderer';
+import Script from 'next/script';
 
 interface ChapterPageProps {
   params: Promise<{
@@ -68,12 +68,25 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
             </CardHeader>
             <CardContent>
               <div className="prose prose-lg max-w-none">
-                <MermaidRenderer content={processedContent} />
+                <div dangerouslySetInnerHTML={{ __html: processedContent }} />
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      {/* Mermaid Script - loads after page render */}
+      <Script
+        type="module"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+            mermaid.initialize({startOnLoad: true});
+            mermaid.contentLoaded();
+          `,
+        }}
+      />
     </div>
   );
 } 

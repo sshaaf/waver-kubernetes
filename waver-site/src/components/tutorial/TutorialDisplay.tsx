@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { MermaidRenderer } from '@/components/MermaidRenderer';
+import Script from 'next/script';
 
 interface TutorialDisplayProps {
   tutorial: Tutorial;
@@ -31,6 +31,9 @@ export function TutorialDisplay({ tutorial, processedContent }: TutorialDisplayP
   const [showFileTree, setShowFileTree] = useState(false);
 
   const { repository, metadata, content, fileStructure } = tutorial;
+  
+  // Use processedContent if available, otherwise use raw content
+  const displayContent = processedContent && processedContent.trim() ? processedContent : content;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -172,14 +175,23 @@ export function TutorialDisplay({ tutorial, processedContent }: TutorialDisplayP
         </CardHeader>
         <CardContent>
           <div className="prose prose-lg max-w-none">
-            {processedContent && processedContent.trim() ? (
-              <div dangerouslySetInnerHTML={{ __html: processedContent }} />
-            ) : (
-              <MermaidRenderer content={content} />
-            )}
+            <div dangerouslySetInnerHTML={{ __html: displayContent }} />
           </div>
         </CardContent>
       </Card>
+      
+      {/* Mermaid Script - loads after page render */}
+      <Script
+        type="module"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+            mermaid.initialize({startOnLoad: true});
+            mermaid.contentLoaded();
+          `,
+        }}
+      />
     </div>
   );
 }
