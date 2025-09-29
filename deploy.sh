@@ -396,7 +396,17 @@ spec:
             secretKeyRef:
               name: waver-backend-secrets
               key: openai-api-key
+        - name: WAVER_OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: waver-backend-secrets
+              key: openai-api-key
         - name: GEMINI_AI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: waver-backend-secrets
+              key: gemini-api-key
+        - name: WAVER_GEMINI_API_KEY
           valueFrom:
             secretKeyRef:
               name: waver-backend-secrets
@@ -421,6 +431,8 @@ spec:
             configMapKeyRef:
               name: waver-backend-config
               key: minio.bucket-name
+        - name: WAVER_GIT_CLONE_DIR
+          value: "/tmp/waver-git-clone"
         resources:
           requests:
             memory: "512Mi"
