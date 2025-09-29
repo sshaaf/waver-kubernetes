@@ -8,10 +8,10 @@ import { processMarkdown } from '@/lib/markdown/processor';
 import { MermaidRenderer } from '@/components/MermaidRenderer';
 
 interface ChapterPageProps {
-  params: {
+  params: Promise<{
     slug: string;
     chapter: string;
-  };
+  }>;
 }
 
 export default async function ChapterPage({ params }: ChapterPageProps) {
