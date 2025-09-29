@@ -52,13 +52,7 @@ public class WaverFunqy {
             System.err.println("Received invalid request: payload or sourceUrl is null.");
             return;
         }
-        try {
-            Files.createDirectories(Path.of(System.getProperty("user.dir") + "/.waver-git-clone/" + request.sourceUrl()));
-        } catch (IOException e) {
-
-            throw new RuntimeException("Error creating dir in user.dir: "+e);
-
-        }
+        
         System.out.println("FUNQY_ENDPOINT: Received request for " + request.sourceUrl() + ". Handing off to background processor.");
 
         // call back immediately and forward
