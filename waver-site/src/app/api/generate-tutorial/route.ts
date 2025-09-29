@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     console.log('Event ID:', eventId);
     console.log('Repository URL:', repositoryUrl);
 
-    const response = await fetch(`${cloudEventServiceUrl}/requests`, {
+    const response = await fetch(`${cloudEventServiceUrl}/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
